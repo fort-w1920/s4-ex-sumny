@@ -1,0 +1,5 @@
+## Lektüre: S4
+
+Lesen Sie das [`S4`](https://adv-r.hadley.nz/s4.html) Kapitel von H. Wickham's *Advanced R*.
+Vor allem die Kapitel zu *"Classes"* und *"Generics and methods"* sollten Sie aufmerksam studieren.
+Der Abschnitt zu *"Multiple Dispatch"* wird für die anschließende Aufgabe sehr nützlich sein.

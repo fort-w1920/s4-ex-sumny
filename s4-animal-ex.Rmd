@@ -1,0 +1,80 @@
+## `S4` -- Königreich der Tiere
+
+```{r, animal_utils, code=readLines("s4-animal/animal-utils.R"), echo=FALSE}
+```
+```{r, animal_mkname, code=readLines("s4-animal/animal-make-name.R"), echo=FALSE}
+```
+```{r, animal_def, code=c(readLines("s4-animal/animal-class.R"), readLines("s4-animal/animal-constructor.R"), readLines("s4-animal/animal-meet.R"), readLines("s4-animal/animal-show.R")), echo=FALSE, results = "hide"}
+```
+Beachten Sie bitte auch die Hinweise am Ende der Aufgabenstellung.
+
+#### Klassenspezifikation
+
+Implementieren Sie folgende Klassenstruktur in `S4`:
+
+* `animal`: 
+    * haben einen `name`
+    * ein numerisches `weight`
+    * sind `female` oder nicht.
+* Unterklasse `prey` (Beutetiere) 
+    * mit Attribut `hide` zwischen 0 und 1 das angibt wie gut sie sich verstecken bzw. weglaufen können.
+    * Unterklassen:
+        * `mouse`: `weight`$\in[0.5, 1]$, `hide`$\in[0.6, 1]$
+        * `rabbit`: `weight`$\in[1, 5]$, `hide`$\in[0.3, 0.8]$
+        * `deer`: `weight`$\in[15, 30]$, `hide`$\in[0.2, 0.7]$
+* Unterklasse  `predator` (Raubtier):
+    * mit Attribut `seek` zwischen 0 und 1 das angibt wie gut sie Beute aufspüren und verfolgen können.
+    * Unterklassen:
+        * `hawk`: `weight`$\in[3, 8]$, `seek`$\in[0.6, 1]$
+        * `lynx`: `weight`$\in[20, 60]$, `seek`$\in[0.5, 0.9]$ 
+
+  Schreiben Sie entsprechende Konstruktorfunktionen `mouse()`, `hawk()`, etc... für Objekte aus den Klassen, die nicht übergebene Attributwerte zufällig aus den oben angebenen Intervallen ziehen. Überprüfen Sie alle Aspekte Ihrer Implementation mit Testfällen wie den folgenden:
+```{r, animal_constructor_test, error=TRUE}
+deer()
+hawk()
+str(mouse(female = TRUE))
+str(hawk(weight = 4))
+str(lynx(name = "", weight = NA + 1))
+str(mouse(weight = 100))
+```
+Achten Sie hier besonders auf **DRY** Code. Ihre Klassendefinitionen sollten auch entsprechende `validity`-Funktionen beinhalten (s. letzte 2 Bsp. oben).
+
+
+#### `meet`-Methoden
+
+
+Wenn sich zwei Tiere begegnen, geschieht eines der  Ereignisse "ignorieren sich", "beschnuppern sich", "paaren sich", "bekämpfen sich", "Raubtier tötet und frisst Beute", "Beute entkommt dem Raubtier", und zwar mit folgenden Wahrscheinlichkeiten:
+
+* Beute-Beute: 
+    * gleiche Art & verschiedenes Geschlecht^[Wenn Sie heteronormative Kacksc*****e grundsätzlich ablehnen und bekämpfen (recht so!) könnten Sie natürlich auch gleichgeschlechtliche Paarungen zulassen. **Arten**übergreifend läuft aber *nüschd* -- irgendwann muss auch mal Schluss sein, wo kämen wir da hin!!1elf11!]: \newline
+      P("ignorieren sich")=P("beschnuppern sich")=$\frac{1}{4}$, 
+      P("paaren sich")=$\frac{1}{2}$
+    * sonst: \newline
+      P("ignorieren sich")=P("beschnuppern sich")=$\frac{1}{2}$
+    
+* Raubtier-Raubtier: 
+    * gleiche Art & verschiedenes Geschlecht^[s.o.]:  
+      P("bekämpfen sich")=P("paaren sich")=$\frac{1}{2}$
+    * sonst:  
+      P("ignorieren sich")=P("beschnuppern sich")=P("bekämpfen sich")=$\frac{1}{3}$
+* Raubtier-Beute: 
+    * wenn `prey@weight` $\in [0.05 \,\cdot$ `predator@weight` $, 0.7\cdot$` predator@weight`$]$:  
+      P("Raubtier tötet und frisst Beute") $= \min(1, \max(0, 0.6 +$ `predator@seek` - `prey@hide`)),  
+      Gegenereignis: P("Beute entkommt") = 1 - P("Raubtier tötet und frisst Beute").
+    * sonst:  
+      P("ignorieren sich") $=$ P("beschnuppern sich") $=\frac{1}{2}$
+
+Implementieren Sie `meet`-Methoden die entsprechende Strings zurückgeben und überprüfen Sie diese z.B. mit dem nachfolgenden Code. 
+
+Ihre Methoden für die verschiedenen Kombinationen von `prey` und/oder `predator` sollten `callNextMethod()` benutzen und möglichst viel von der Funktionalität, die alle Methoden gemeinsam haben, in eine Methode mit Signatur (`animal`, `animal`) auslagern (*Don't repeat yourself!*).
+
+Beispiel:
+```{r, code = readLines("s4-animal/animal-test.R")}
+```
+*Hinweise:* 
+
+* Bei der Entwicklung von `S4`-Modulen empfiehlt es sich bevor man modifizierte Klassendefinitionen, Konstruktorfunktionen etc. neu lädt die `R`-Session neu zu starten, da sonst manchmal bereits definierte Klassen & Konstruktoren in die Quere kommen können. 
+* Benutzen Sie -- wenn Sie wollen -- `make_name()` um Namen für die Tiere auszuwürfeln:
+```{r, animal_mkname2, code=readLines("s4-animal/animal-make-name.R"), echo=TRUE}
+```
+* Die Namen und konkreten Ereignisse die ihr Code generiert werden zufallsbedingt nicht genau den obigen entsprechen, das macht natürlich nichts.
