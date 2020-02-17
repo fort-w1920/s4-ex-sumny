@@ -1,0 +1,24 @@
+```{r, child = "s4-animal-ex.Rmd"}
+```
+
+----------------------------------------------------
+
+### Lösung:
+
+* Helferfunktionen:
+```{r, animal_utils, code=readLines("s4-animal/animal-utils.R"), echo=TRUE}
+```
+```{r, animal_mkname, code=readLines("s4-animal/animal-make-name.R"), echo=FALSE}
+```
+
+* Klassendefinitionen
+```{r, animal_class, code=readLines("s4-animal/animal-class.R"), echo=TRUE, eval = FALSE}
+```
+
+* Konstruktorfunktionen:
+```{r, animal_cons, code=readLines("s4-animal/animal-constructor.R"), echo=TRUE}
+```
+
+* `meet`-Methoden:
+```{r, animal_meet, code=readLines("s4-animal/animal-meet.R"), echo=TRUE}
+```
